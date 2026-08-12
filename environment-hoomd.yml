@@ -1,0 +1,10 @@
+name: huang-refcba-hoomd
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - hoomd=7.1
+  - numpy
+  - scipy
+  - pandas
+  - pyyaml

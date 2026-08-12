@@ -1,0 +1,11 @@
+simulation:
+  n_particles: 500
+  molecular_weight_kDa: 43.672463
+  temperature_K: 300.0
+  timestep_fs: 1.0
+  andersen_collision_frequency_per_ps: 1.0
+  initial_min_separation_reduced: 1.05
+  platform: CUDA
+  cuda_precision: mixed
+  default_device_index: "0"
+  report_interval_steps: 1000

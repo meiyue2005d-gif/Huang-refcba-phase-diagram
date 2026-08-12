@@ -1,0 +1,28 @@
+model:
+  name: Huang-reflectin-A1-baseline
+
+  # Thermodynamic condition
+  temperature_K: 300.0
+  reference_pH: 4.5
+  reference_ionic_strength_mM: 20.0
+
+  # Main text: Rg = 2.139 nm and d = 2*Rg
+  radius_gyration_nm: 2.139
+  diameter_nm: 4.278
+
+  # Supplemental Table S1, pH 4.5, 20 mM NaAc
+  K1_kBT: 60.0
+  Z1: 2.895
+  K2_kBT: 53.056
+  Z2: 1.483
+
+  # Gaussian-core width from the main paper
+  gaussian_sigma_reduced: 0.35
+
+  # The paper does not tabulate epsilon explicitly.
+  # 1e5 kBT reconstructs the reported ~0.75 kBT well-depth
+  # change while shifting the minimum by less than 5%.
+  gaussian_epsilon_kBT: 100000.0
+
+  # Dimensionless cutoff r/d
+  cutoff_reduced: 4.0

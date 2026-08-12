@@ -1,0 +1,23 @@
+state_model:
+  model_id: huang_a1_eq10_reproduction_v1
+  charge_mapping: huang_eq10_charge_magnitude
+  protein_id: D_opalescens_reflectin_A1_KF661517.1
+  sequence_fasta: ../data/reference_sequences/D_opalescens_reflectin_A1_KF661517.fasta
+
+  reference_pH: 4.5
+  reference_added_NaCl_mM: 0.0
+  background_ionic_strength_mM: 20.0
+  K2_reference_kBT: 53.056
+  Z2_reference: 1.483
+  charge_exponent: 1.0
+  thermal_voltage_mV: 25.851999786435535
+
+  # Salt-amplitude scaling is disabled for strict reproduction. Z2 still
+  # follows the project's explicit Debye screening extension if salt changes.
+  salt_amplitude_exponent: 0.0
+  minimum_charge_e: 0.0
+
+  # Huang et al. extrapolated the fitted pH 4.5 potential over pH 4.5-7.5.
+  validity_pH_min: 4.5
+  validity_pH_max: 7.5
+  validity_added_NaCl_max_mM: 0.0

@@ -1,0 +1,54 @@
+LOCUS       KF661517                1053 bp    mRNA    linear   INV 01-OCT-2014
+DEFINITION  Doryteuthis opalescens reflectin-like protein A1 mRNA, complete
+            cds.
+ACCESSION   KF661517
+VERSION     KF661517.1
+KEYWORDS    .
+SOURCE      Doryteuthis opalescens
+  ORGANISM  Doryteuthis opalescens
+            Eukaryota; Metazoa; Spiralia; Lophotrochozoa; Mollusca;
+            Cephalopoda; Coleoidea; Decapodiformes; Myopsida; Loliginidae;
+            Doryteuthis.
+REFERENCE   1  (bases 1 to 1053)
+  AUTHORS   DeMartini,D.G. and Morse,D.E.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (11-SEP-2013) Biomolecular Sciences and Engineeering
+            Program, University of California - Santa Barbara, Bldg 555 Marine
+            Biotechnology Room 3102, Santa Barbara, CA 93106, USA
+FEATURES             Location/Qualifiers
+     source          1..1053
+                     /organism="Doryteuthis opalescens"
+                     /mol_type="mRNA"
+                     /db_xref="taxon:1051066"
+     CDS             1..1053
+                     /note="structural component of dynamic squid iridocytes"
+                     /codon_start=1
+                     /product="reflectin-like protein A1"
+                     /protein_id="AIN36558.1"
+                     /translation="MNRYLNRQRLYNMYRNKYRGVMEPMSRMTMDFQGRYMDSQGRMV
+                     DPRYYDHYGRMHDYDRYYGRSMFNQGHSMDSQRYGGWMDNPERYMDMSGYQMDMQGRW
+                     MDAQGRYNNPFSQMWHSRQGHYPGYMSHHSMYGRNMHYPYHSHSASRHFDSPERWMDM
+                     SGYQMDMQGRWMDNYGRYVNPFHHHMYGRNMFYPYGSHCNNRHMEHPERYMDMSGYQM
+                     DMQGRWMDTHGRHCNPLGQMWHNRHGYYPGHPHGRNMFQPERWMDMSSYQMDMQGRWM
+                     DNYGRYVNPFSHNYGRHMNYPGGHYNYHHGRYMNHPERQMDMSGYQMDMHGRWMDNQG
+                     RYIDNFDRNYYDYHMY"
+ORIGIN
+        1 atgaatcgat atctgaatcg acagcgcctg tacaacatgt acagaaacaa gtaccgaggt
+       61 gtgatggaac cgatgtccag aatgaccatg gacttccaag gaagatacat ggactcccag
+      121 ggcagaatgg tcgacccccg atactacgac cactacggaa gaatgcacga ctatgaccga
+      181 tactacggaa ggtccatgtt caaccaggga cacagcatgg acagtcaacg ctacggcggc
+      241 tggatggaca accccgagag gtacatggac atgtctggct accagatgga catgcaggga
+      301 cgctggatgg acgcccaggg gcgctacaac aacccattta gtcaaatgtg gcacagcagg
+      361 caaggccact accctggtta catgtcacat cactccatgt atggtagaaa tatgcactac
+      421 ccctaccaca gccattccgc cagccggcat ttcgattccc ctgaaagatg gatggacatg
+      481 tccgggtatc agatggacat gcagggacgc tggatggata actacggccg ctacgtgaac
+      541 ccgttccacc accacatgta tggcagaaac atgttttatc cttacggcag ccattgcaac
+      601 aatcggcaca tggagcaccc cgagaggtac atggacatgt ccggctatca gatggacatg
+      661 cagggacgct ggatggacac acatggacgt cactgcaacc cgctcggtca gatgtggcac
+      721 aacaggcacg gttactatcc aggacaccca catggtcgca acatgttcca gcccgaaaga
+      781 tggatggata tgtccagcta tcagatggac atgcaagggc gttggatgga taactacggc
+      841 cgttatgtga acccgttcag tcataactac ggcaggcata tgaattaccc tggaggtcac
+      901 tacaactacc accacggtcg ctacatgaat caccccgaga gacagatgga catgtccggc
+      961 tatcagatgg acatgcacgg acgctggatg gacaaccagg gccgttatat tgacaatttc
+     1021 gatagaaatt attacgatta tcacatgtat taa
+//

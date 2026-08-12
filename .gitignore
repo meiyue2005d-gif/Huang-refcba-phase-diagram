@@ -1,0 +1,76 @@
+# Simulation outputs and local archives (kept locally, not versioned)
+results/*
+!results/README.md
+backup_*/
+portable_release/
+root/
+
+# Python/cache/test artifacts
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Large numerical/trajectory artifacts
+*.npz
+*.npy
+*.gsd
+*.dcd
+*.xtc
+*.trr
+*.h5
+*.hdf5
+*.tar
+*.tar.gz
+*.zip
+*.pdb
+*.log
+
+# Local environments and credentials
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+*.pem
+*.key
+
+# Editor/OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+
+# Historical scratch copies inside scripts
+*.bak
+*.bak_*
+*.bad
+*.before_*
+*-checkpoint.*
+
+# Historical host-specific launchers with /root/autodl-tmp paths. They remain
+# available in the local archive but are not portable release entry points.
+/scripts/analyze_friend_boundary_seed20260860.sh
+/scripts/build_active_learning_highph_seed20260885.py
+/scripts/run_boundary_scans_5ns.sh
+/scripts/run_concentration_refine_30ns_batch2_c6p25_seed20260850.sh
+/scripts/run_dc_refine_nacl100.sh
+/scripts/run_fast_salt_scans.sh
+/scripts/run_hoomd_coarse_224_0p5ns.sh
+/scripts/run_hoomd_key4_1ns.sh
+/scripts/run_hoomd_pH9_5ns.sh
+/scripts/run_hoomd_strong2_5ns.sh
+/scripts/run_hoomd_validation_panel_5ns.sh
+
+# The project root contains local orchestration copies. Canonical scripts are
+# under scripts/ and are staged explicitly for releases.
+/*.py
+/*.sh
+/*.sha256
+/=
