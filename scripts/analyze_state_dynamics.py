@@ -311,6 +311,15 @@ def main() -> None:
         table.iloc[-1]["msd_nm2"]
     )
 
+    late = table.iloc[max(0, len(table) // 2):]
+    late_time_ns = late["elapsed_time_ps"].to_numpy(dtype=float) / 1000.0
+    late_largest_fraction = late["largest_cluster_fraction"].to_numpy(dtype=float)
+    late_largest_cluster_fraction_slope_per_ns = (
+        float(np.polyfit(late_time_ns, late_largest_fraction, 1)[0])
+        if len(late) >= 3 and np.ptp(late_time_ns) > 0.0
+        else 0.0
+    )
+
     frozen_finite_clusters = bool(
         percolation_fraction < 0.5
         and mean_clustered_fraction >= 0.8
@@ -364,6 +373,9 @@ def main() -> None:
             mean_consecutive_retention
         ),
         "final_msd_nm2": final_msd_nm2,
+        "late_largest_cluster_fraction_slope_per_ns": (
+            late_largest_cluster_fraction_slope_per_ns
+        ),
         "frozen_finite_clusters": (
             frozen_finite_clusters
         ),

@@ -27,7 +27,7 @@ def test_legacy_configuration_preserves_original_mapping() -> None:
     )
 
 
-def test_eq10_magnitude_maps_charge_reversal_without_discontinuity() -> None:
+def test_refcba_default_maps_charge_reversal_without_discontinuity() -> None:
     model = RefCBAStateModel.from_yaml(
         ROOT / "configs" / "refcba_state_model.yaml"
     )
@@ -35,6 +35,15 @@ def test_eq10_magnitude_maps_charge_reversal_without_discontinuity() -> None:
     assert _k2(model, 4.8852) < 0.01
     assert _k2(model, 7.0) > 0.0
     assert _k2(model, 9.0) > _k2(model, 7.0)
+
+
+def test_v3_gouy_chapman_salt_extension_is_normalized_and_monotone() -> None:
+    model = RefCBAStateModel.from_yaml(
+        ROOT / "configs" / "refcba_state_model.yaml"
+    )
+    assert model.model_id == "huang_anchored_refcba_gouy_chapman_salt_v3"
+    assert np.isclose(_k2(model, 4.5, 0.0), 53.056, rtol=0, atol=1e-10)
+    assert _k2(model, 4.5, 500.0) < _k2(model, 4.5, 100.0) < _k2(model, 4.5, 0.0)
 
 
 def test_huang_a1_eq10_matches_project_reference_table() -> None:

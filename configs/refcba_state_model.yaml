@@ -1,8 +1,8 @@
 state_model:
-  # Huang-A1-anchored refCBA sensitivity model, version 2.
+  # Huang-A1-anchored refCBA sensitivity model, version 3.
   # This is not a refCBA-specific experimental calibration.
-  model_id: huang_anchored_refcba_eq10_magnitude_v2
-  charge_mapping: huang_eq10_charge_magnitude
+  model_id: huang_anchored_refcba_gouy_chapman_salt_v3
+  charge_mapping: gouy_chapman_charge_salt_magnitude
   protein_id: refCBA_62aa
 
   # Huang Table S1 reference state
@@ -19,8 +19,9 @@ state_model:
   # Huang Eq. 10 uses the kBT/e thermal-voltage scale.
   thermal_voltage_mV: 25.851999786435535
 
-  # Approximate Gouy-Chapman low-potential salt scaling
-  salt_amplitude_exponent: 0.5
+  # Salt is already included inside the Gouy-Chapman asinh argument.  A
+  # post-hoc amplitude power would double-count screening.
+  salt_amplitude_exponent: 0.0
 
   # Numerical protection near the isoelectric point
   minimum_charge_e: 0.0

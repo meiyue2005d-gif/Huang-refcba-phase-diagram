@@ -585,6 +585,8 @@ def main() -> None:
         "state_config": str(args.state_config.resolve()),
         "md_config": str(args.md_config.resolve()),
         **state_model.applicability_flags(args.ph, args.nacl_mM),
+        "strict_salr_interaction": bool(state_params.is_salr),
+        "outside_strict_salr_regime": not bool(state_params.is_salr),
         "pH": args.ph,
         "added_NaCl_mM": args.nacl_mM,
         "concentration_mg_ml": args.concentration_mg_ml,

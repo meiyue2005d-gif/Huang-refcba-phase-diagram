@@ -107,14 +107,33 @@ claim equilibrium LLPS. Conservative LLPS classification requires direct
 coexistence evidence and dynamic exchange, ideally with multiple seeds and a
 finite-size check.
 
-The main aggregation entry point is:
+The old 224-state aggregation entry point remains available for historical
+results. The new reproducible workflow is configuration-driven:
 
 ```bash
-python scripts/finalize_refcba_three_phase.py \
-  --results-root results \
-  --screening-csv results/<screen>/screening_classified.csv \
-  --output-dir results/final_three_phase
+python scripts/generate_phase_scan_manifest.py \
+  --output manifests/refcba_full_grid_v3.tsv
+python scripts/run_phase_scan.py \
+  --manifest manifests/refcba_full_grid_v3.tsv \
+  --analysis-python /path/to/analysis/python \
+  --hoomd-python /path/to/hoomd/python
+python scripts/summarize_phase_scan.py \
+  --manifest manifests/refcba_full_grid_v3.tsv
+python scripts/run_phase_scan.py \
+  --manifest results/refcba_full_grid_v3/summary/long_run_manifest.tsv \
+  --equil-steps 500000 --prod-steps 30000000
+python scripts/run_direct_coexistence_manifest.py \
+  --manifest results/refcba_full_grid_v3/summary/direct_coexistence_manifest.tsv \
+  --analysis-python /path/to/analysis/python \
+  --hoomd-python /path/to/hoomd/python
+python scripts/finalize_phase_scan.py
 ```
+
+The default grid contains 448 short screening states (7 pH x 8 NaCl x 8
+concentrations). Only unresolved states, sampled boundary neighbors, and
+homogeneous coarsening candidates are promoted to replicated 30 ns runs.
+Confirmed LLPS requires a persistent direct-coexistence profile, exchange, and
+at least two agreeing seeds. See [docs/USAGE_zh.md](docs/USAGE_zh.md).
 
 ## Existing data
 
@@ -124,14 +143,14 @@ The old simulation archive is not included. Locally, run:
 python scripts/audit_legacy_data_against_model_v2.py
 ```
 
-to determine whether a legacy trajectory exactly matches the revised
-Hamiltonian or can only be used as legacy-model evidence.
+to determine whether a historical trajectory exactly matches the current v3
+Hamiltonian or can only be used as historical-model evidence.
 
 ## Reference
 
 Huang et al., “A colloidal model for the equilibrium assembly and
 liquid-liquid phase separation of the reflectin A1 protein,” *Biophysical
-Journal* (2024). DOI: [10.1016/j.bpj.2024.05.029](https://doi.org/10.1016/j.bpj.2024.05.029).
+Journal* (2024). DOI: [10.1016/j.bpj.2024.07.004](https://doi.org/10.1016/j.bpj.2024.07.004).
 
 ## License
 

@@ -98,7 +98,7 @@ def classify_md_phase(
 
     is_percolated = (
         percolation_fraction
-        > PERCOLATION_THRESHOLD
+        >= PERCOLATION_THRESHOLD
     )
 
     is_arrested = bool(
