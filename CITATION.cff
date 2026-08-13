@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite this repository and Huang et al. (2024)."
+title: "Huang-refCBA phase-diagram model"
+type: software
+authors:
+  - family-names: "Repository contributors"
+repository-code: "https://github.com/meiyue2005d-gif/Huang-refcba-phase-diagram"
+license: "LicenseRef-Proprietary"
+references:
+  - type: article
+    title: "A colloidal model for the equilibrium assembly and liquid-liquid phase separation of the reflectin A1 protein"
+    journal: "Biophysical Journal"
+    year: 2024
+    doi: "10.1016/j.bpj.2024.05.029"

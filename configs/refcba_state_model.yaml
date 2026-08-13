@@ -1,0 +1,32 @@
+state_model:
+  # Huang-A1-anchored refCBA sensitivity model, version 2.
+  # This is not a refCBA-specific experimental calibration.
+  model_id: huang_anchored_refcba_eq10_magnitude_v2
+  charge_mapping: huang_eq10_charge_magnitude
+  protein_id: refCBA_62aa
+
+  # Huang Table S1 reference state
+  reference_pH: 4.5
+  reference_added_NaCl_mM: 0.0
+  background_ionic_strength_mM: 20.0
+
+  K2_reference_kBT: 53.056
+  Z2_reference: 1.483
+
+  # Retained only for backward compatibility with the legacy mapping.
+  charge_exponent: 1.0
+
+  # Huang Eq. 10 uses the kBT/e thermal-voltage scale.
+  thermal_voltage_mV: 25.851999786435535
+
+  # Approximate Gouy-Chapman low-potential salt scaling
+  salt_amplitude_exponent: 0.5
+
+  # Numerical protection near the isoelectric point
+  minimum_charge_e: 0.0
+
+  # pH is a sensitivity range, while added salt is an unvalidated
+  # extrapolation beyond the Huang reference buffer.
+  validity_pH_min: 3.0
+  validity_pH_max: 9.0
+  validity_added_NaCl_max_mM: 0.0

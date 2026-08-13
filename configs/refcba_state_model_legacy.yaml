@@ -1,0 +1,17 @@
+state_model:
+  model_id: legacy_refcba_abs_charge_v1
+  charge_mapping: legacy_absolute_power
+  protein_id: refCBA_62aa
+
+  reference_pH: 4.5
+  reference_added_NaCl_mM: 0.0
+  background_ionic_strength_mM: 20.0
+  K2_reference_kBT: 53.056
+  Z2_reference: 1.483
+  charge_exponent: 1.0
+  salt_amplitude_exponent: 0.5
+  minimum_charge_e: 0.0
+
+  validity_pH_min: 3.0
+  validity_pH_max: 9.0
+  validity_added_NaCl_max_mM: 0.0

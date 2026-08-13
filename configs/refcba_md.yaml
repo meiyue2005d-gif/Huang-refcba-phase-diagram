@@ -1,0 +1,20 @@
+simulation:
+  n_particles: 500
+
+  # Estimated from the 62-aa refCBA sequence currently used
+  molecular_weight_kDa: 8.018862
+
+  temperature_K: 300.0
+  timestep_fs: 1.0
+
+  # Numerical choice for the Andersen thermostat
+  andersen_collision_frequency_per_ps: 1.0
+
+  # Start from a dispersed configuration without severe overlap
+  initial_min_separation_reduced: 1.05
+
+  platform: CUDA
+  cuda_precision: mixed
+  default_device_index: "0"
+
+  report_interval_steps: 1000
