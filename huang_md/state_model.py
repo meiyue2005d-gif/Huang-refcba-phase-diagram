@@ -27,9 +27,11 @@ class RefCBAStateModel:
     """Calibrated pH- and salt-dependent electrostatic model.
 
     ``legacy_absolute_power`` exactly preserves the original project model.
-    ``huang_eq10_charge_magnitude`` applies Huang et al. Eq. 10 to the
-    magnitude of the charge ratio. Charge-reversed states remain repulsive,
-    but are explicitly marked as an extrapolation by ``applicability_flags``.
+    ``huang_eq10_charge_magnitude`` preserves the first revised project model.
+    ``gouy_chapman_charge_salt_magnitude`` additionally places the ionic-
+    strength correction inside the Gouy-Chapman ``asinh`` argument.  This is
+    the default for new salt scans; applying a square-root salt factor after
+    Eq. 10 is retained only for reproducibility.
     """
 
     reference_pH: float
@@ -145,6 +147,7 @@ class RefCBAStateModel:
         allowed_mappings = {
             "legacy_absolute_power",
             "huang_eq10_charge_magnitude",
+            "gouy_chapman_charge_salt_magnitude",
         }
         if self.charge_mapping not in allowed_mappings:
             raise ValueError(
@@ -274,6 +277,12 @@ def calculate_K2_kBT(
         sequence=sequence,
     )
 
+    current_ionic_strength = ionic_strength_mM(
+        salt_broadcast,
+        model,
+    )
+    ionic_strength_reference = reference_ionic_strength_mM(model)
+
     if model.charge_mapping == "legacy_absolute_power":
         charge = np.abs(charge)
         if model.minimum_charge_e > 0:
@@ -282,7 +291,7 @@ def calculate_K2_kBT(
             charge / abs(charge_reference)
         ) ** model.charge_exponent
         charge_mapped_K2 = model.K2_reference_kBT * charge_factor
-    else:
+    elif model.charge_mapping == "huang_eq10_charge_magnitude":
         # Huang et al. Eq. 10, using charge magnitude because two identical
         # proteins remain mutually repulsive after both reverse sign. Huang
         # did not calibrate across a sign reversal, so metadata separately
@@ -293,15 +302,20 @@ def calculate_K2_kBT(
             charge_ratio_magnitude
             * np.sinh(model.K2_reference_kBT / (2.0 * voltage))
         )
-
-    current_ionic_strength = ionic_strength_mM(
-        salt_broadcast,
-        model,
-    )
-
-    ionic_strength_reference = reference_ionic_strength_mM(
-        model
-    )
+    else:
+        # Gouy-Chapman/Grahame extension at fixed charge density:
+        # sigma is proportional to sqrt(I) * sinh(psi / 2 V_T).
+        # Huang Eq. 10 is recovered exactly at the reference ionic strength.
+        charge_ratio_magnitude = np.abs(charge / charge_reference)
+        voltage = model.thermal_voltage_mV
+        salt_ratio = np.sqrt(
+            ionic_strength_reference / current_ionic_strength
+        )
+        charge_mapped_K2 = 2.0 * voltage * np.arcsinh(
+            charge_ratio_magnitude
+            * salt_ratio
+            * np.sinh(model.K2_reference_kBT / (2.0 * voltage))
+        )
 
     salt_factor = (
         ionic_strength_reference / current_ionic_strength

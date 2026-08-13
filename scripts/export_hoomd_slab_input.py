@@ -15,6 +15,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+STATE_CONFIG = ROOT / "configs" / "refcba_state_model.yaml"
+MD_CONFIG = ROOT / "configs" / "refcba_md.yaml"
 
 from huang_md.openmm_orthorhombic import create_orthorhombic_system, create_orthorhombic_topology
 from huang_md.slab_initialization import (
@@ -126,6 +128,8 @@ def build_parser() -> argparse.ArgumentParser:
         type=Path,
         required=True,
     )
+    parser.add_argument("--state-config", type=Path, default=STATE_CONFIG)
+    parser.add_argument("--md-config", type=Path, default=MD_CONFIG)
 
     return parser
 
@@ -208,6 +212,10 @@ def main() -> None:
             str(args.table_width),
             "--output-dir",
             str(reference_dir),
+            "--state-config",
+            str(args.state_config),
+            "--md-config",
+            str(args.md_config),
         ]
 
         subprocess.run(command, check=True)

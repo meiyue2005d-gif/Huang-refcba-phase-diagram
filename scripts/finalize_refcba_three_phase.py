@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Finalize the refCBA pH–salt–concentration scan into an operational
+"""Finalize a historical refCBA pH-salt-concentration scan into a
 soluble / LLPS / aggregation phase table and extract boundary surfaces.
 
 The script is intentionally defensive: it searches under --results-root for the
@@ -144,9 +144,9 @@ def classify_screen_label(label: object) -> tuple[str, str, str]:
         return "unresolved", "llps", "short_screen_dynamic_coarsening_candidate"
 
     if any(k in s for k in ["finite_cluster", "cluster_candidate", "clustered_state"]):
-        # A finite equilibrium cluster fluid is not LLPS. In the requested three-bin
-        # output it is grouped with aggregation, but confidence remains low.
-        return "unresolved", "aggregation", "short_screen_finite_cluster_candidate"
+        # Huang explicitly identifies an equilibrium cluster fluid.  Without
+        # arrest or percolation, it belongs to the soluble public phase.
+        return "soluble", "soluble", "short_screen_mobile_finite_cluster_fluid"
 
     if "unresolved" in s or "review" in s:
         return "unresolved", "unresolved", "screen_unresolved"
@@ -196,8 +196,6 @@ def apply_5ns_overrides(df: pd.DataFrame) -> pd.DataFrame:
         s = normalize_label(row.get(label_col))
         if not s:
             continue
-        score = pd.to_numeric(pd.Series([row.get("llps_candidate_score", np.nan)]), errors="coerce").iloc[0]
-
         if any(k in s for k in ["mostly_dispersed", "soluble"]):
             out.at[idx, "phase_conservative"] = "soluble"
             out.at[idx, "phase_operational"] = "soluble"
@@ -210,15 +208,15 @@ def apply_5ns_overrides(df: pd.DataFrame) -> pd.DataFrame:
             out.at[idx, "evidence_source"] = "5ns_validation"
         elif any(k in s for k in ["dynamic_coarsening", "llps"]):
             out.at[idx, "phase_operational"] = "llps"
-            out.at[idx, "phase_conservative"] = "llps" if pd.notna(score) and score >= 2 else "unresolved"
-            out.at[idx, "evidence_level"] = "medium" if pd.notna(score) and score >= 2 else "low"
-            out.at[idx, "evidence_source"] = "5ns_validation"
-        elif any(k in s for k in ["finite_cluster", "mobile_cluster", "clustered_state"]):
-            # Keep separate scientifically via note, but group into aggregation for
-            # the requested 3-class operational map.
-            out.at[idx, "phase_operational"] = "aggregation"
+            # A homogeneous 5 ns trajectory can nominate a slab test but cannot
+            # establish equilibrium coexistence regardless of its screen score.
             out.at[idx, "phase_conservative"] = "unresolved"
             out.at[idx, "evidence_level"] = "low"
+            out.at[idx, "evidence_source"] = "5ns_validation"
+        elif any(k in s for k in ["finite_cluster", "mobile_cluster", "clustered_state"]):
+            out.at[idx, "phase_operational"] = "soluble"
+            out.at[idx, "phase_conservative"] = "soluble"
+            out.at[idx, "evidence_level"] = "medium"
             out.at[idx, "evidence_source"] = "5ns_finite_or_mobile_cluster"
         elif "unresolved" in s:
             out.at[idx, "phase_conservative"] = "unresolved"
@@ -348,7 +346,9 @@ def apply_long_overrides(df: pd.DataFrame) -> pd.DataFrame:
                     if direct_coexistence and exchange_true
                     else "unresolved"
                 )
-        elif any(k in s for k in ["finite_cluster", "mobile_cluster", "clustered_unresolved", "unresolved"]):
+        elif any(k in s for k in ["finite_cluster", "mobile_cluster"]):
+            conservative_phase = operational_phase = "soluble"
+        elif any(k in s for k in ["clustered_unresolved", "unresolved"]):
             conservative_phase = operational_phase = "unresolved"
         else:
             continue
@@ -491,7 +491,7 @@ def make_plots(df: pd.DataFrame, outdir: Path, phase_col: str) -> None:
                                math.log10(min(concs))-0.08, math.log10(max(concs))+0.08])
         ax.set_xlabel("pH")
         ax.set_ylabel("log10 concentration (mg/mL)")
-        ax.set_title(f"refCBA operational three-phase map, NaCl = {salt:g} mM")
+        ax.set_title(f"refCBA conservative three-phase map, NaCl = {salt:g} mM")
         cbar = fig.colorbar(im, ax=ax, ticks=[0, 1, 2, 3])
         cbar.ax.set_yticklabels(["soluble", "LLPS", "aggregation", "unresolved"])
         fig.tight_layout()
@@ -536,14 +536,17 @@ def main() -> None:
     merged = apply_5ns_overrides(merged)
     merged = merge_long_validation(merged, root)
     merged = apply_long_overrides(merged)
-    merged = smooth_isolated_bins(merged, "phase_operational")
+    # Do not smooth the scientific labels.  Sparse-grid islands are preserved
+    # as sampled evidence and handled by targeted refinement instead.
 
     # Drop internal key columns only in the public table.
     public = merged.sort_values(["nacl_mm", "ph", "concentration_mg_ml"]).copy()
     key_cols = [c for c in public.columns if c.startswith("_")]
     public = public.drop(columns=key_cols)
 
-    transitions, envelopes = extract_boundaries(public, "phase_operational")
+    # Public phase boundaries use only conservative evidence. Operational
+    # candidates are retained in the state table and validation manifest.
+    transitions, envelopes = extract_boundaries(public, "phase_conservative")
     manifest = validation_manifest(public, transitions)
 
     public.to_csv(outdir / "refcba_three_phase_state_table.csv", index=False)
@@ -562,15 +565,15 @@ def main() -> None:
         "targeted_validation_state_count": int(len(manifest)),
         "interpretation": {
             "soluble": "dispersed plus weak reversible oligomers",
-            "llps": "dynamic coarsening/macroscopic condensation; confidence stored separately",
-            "aggregation": "arrested/strong aggregation plus finite cluster states in the requested three-bin compression",
+            "llps": "replicated persistent dense/dilute coexistence with dynamic exchange",
+            "aggregation": "kinetically arrested finite aggregates or persistent percolated networks",
             "unresolved": "insufficient long-time evidence for a conservative assignment",
         },
     }
     (outdir / "refcba_three_phase_report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
     if not args.no_plots:
-        make_plots(public, outdir, "phase_operational")
+        make_plots(public, outdir, "phase_conservative")
 
     print("\nOperational counts:", counts_oper)
     print("Conservative counts:", counts_cons)
@@ -578,8 +581,8 @@ def main() -> None:
     print(f"Targeted 30 ns states: {len(manifest)}")
     print(f"Outputs: {outdir}")
 
-    if len(public) != 224:
-        print("WARNING: selected table does not contain exactly 224 states. Inspect the selected CSV.")
+    if len(public) not in {224, 448}:
+        print("WARNING: selected table is not a recognized 224- or 448-state grid. Inspect the selected CSV.")
 
 
 if __name__ == "__main__":

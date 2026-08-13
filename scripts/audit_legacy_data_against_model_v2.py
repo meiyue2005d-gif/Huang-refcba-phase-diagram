@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit legacy simulation runs against the versioned state models."""
+"""Audit historical simulation runs against the current default model."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument(
         "--output-csv",
         type=Path,
-        default=ROOT / "results" / "model_v2_data_audit.csv",
+        default=ROOT / "results" / "model_v3_data_audit.csv",
     )
     return result
 
@@ -44,7 +44,7 @@ def main() -> None:
     legacy = RefCBAStateModel.from_yaml(
         ROOT / "configs" / "refcba_state_model_legacy.yaml"
     )
-    revised = RefCBAStateModel.from_yaml(
+    current = RefCBAStateModel.from_yaml(
         ROOT / "configs" / "refcba_state_model.yaml"
     )
 
@@ -63,22 +63,22 @@ def main() -> None:
         stored_K2 = float(data["K2_kBT"])
         stored_Z2 = float(data["Z2"])
         legacy_K2 = scalar(calculate_K2_kBT, pH, salt, legacy)
-        revised_K2 = scalar(calculate_K2_kBT, pH, salt, revised)
-        revised_Z2 = scalar(calculate_Z2, pH, salt, revised)
+        current_K2 = scalar(calculate_K2_kBT, pH, salt, current)
+        current_Z2 = scalar(calculate_Z2, pH, salt, current)
         matches_legacy = bool(
             np.isclose(stored_K2, legacy_K2, rtol=1e-8, atol=1e-8)
-            and np.isclose(stored_Z2, revised_Z2, rtol=1e-8, atol=1e-8)
+            and np.isclose(stored_Z2, current_Z2, rtol=1e-8, atol=1e-8)
         )
-        matches_revised = bool(
-            np.isclose(stored_K2, revised_K2, rtol=1e-8, atol=1e-8)
-            and np.isclose(stored_Z2, revised_Z2, rtol=1e-8, atol=1e-8)
+        matches_current = bool(
+            np.isclose(stored_K2, current_K2, rtol=1e-8, atol=1e-8)
+            and np.isclose(stored_Z2, current_Z2, rtol=1e-8, atol=1e-8)
         )
         run_dir = metadata_path.parent
         has_trajectory = (run_dir / "trajectory_positions.npz").exists()
         has_final_state = (run_dir / "final_state_hoomd.npz").exists()
 
-        if matches_revised:
-            disposition = "directly_reusable_revised_model"
+        if matches_current:
+            disposition = "directly_reusable_current_v3_model"
         elif matches_legacy and has_trajectory:
             disposition = "legacy_only_raw_trajectory_reanalyzable"
         elif matches_legacy:
@@ -95,14 +95,14 @@ def main() -> None:
                 "seed": data.get("seed"),
                 "stored_K2_kBT": stored_K2,
                 "legacy_K2_kBT": legacy_K2,
-                "revised_K2_kBT": revised_K2,
-                "relative_K2_change_revised_vs_stored": (
-                    (revised_K2 - stored_K2) / max(abs(stored_K2), 1e-12)
+                "current_K2_kBT": current_K2,
+                "relative_K2_change_current_vs_stored": (
+                    (current_K2 - stored_K2) / max(abs(stored_K2), 1e-12)
                 ),
                 "stored_Z2": stored_Z2,
-                "revised_Z2": revised_Z2,
+                "current_Z2": current_Z2,
                 "matches_legacy_model": matches_legacy,
-                "matches_revised_model": matches_revised,
+                "matches_current_v3_model": matches_current,
                 "has_trajectory_positions": has_trajectory,
                 "has_final_state": has_final_state,
                 "disposition": disposition,
